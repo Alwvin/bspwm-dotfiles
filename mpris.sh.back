@@ -1,0 +1,78 @@
+#!/bin/bash
+
+STATE_FILE="/tmp/mpris_last_state"
+
+if [[ "$1" == "--playpause" ]]; then
+    if playerctl status >/dev/null 2>&1; then
+        playerctl play-pause
+    else
+        if [[ -f "$STATE_FILE" ]]; then
+            last_player=$(awk -F'|' '{print $1}' "$STATE_FILE")
+            
+            if [[ "${last_player,,}" == *"spotify"* ]]; then
+                spotify &
+                (sleep 3 && playerctl play) &
+            elif [[ "${last_player,,}" == *"spotube"* ]]; then
+                spotube &
+                (sleep 3 && playerctl play) &
+            elif [[ "${last_player,,}" == *"firefox"* ]]; then
+                firefox &
+            elif [[ "${last_player,,}" == *"brave"* ]]; then
+                brave &
+            elif [[ "${last_player,,}" == *"chromium"* ]]; then
+                chromium &
+            elif [[ "${last_player,,}" == *"vlc"* ]]; then
+                vlc &
+            fi
+        fi
+    fi
+    exit 0
+fi
+
+while true; do
+    if ! playerctl status >/dev/null 2>&1; then
+        if [[ -f "$STATE_FILE" ]]; then
+            IFS='|' read -r last_player last_icon last_text < "$STATE_FILE"
+            echo " %{F#5dbb63}${last_icon}%{F-} ${last_text}  %{A1:playerctl previous:}󰒮%{A} %{A1:~/.config/bspwm/rices/julia/mpris.sh --playpause:}󰐊%{A} %{A1:playerctl next:}󰒭%{A} "
+        else
+            echo " %{F#5c6370}No Music %{F-} "
+        fi
+        sleep 2
+    else
+        playerctl metadata --follow --format '{{status}}~{{playerName}}~{{title}}~{{artist}}' 2>/dev/null | while IFS="~" read -r status player title artist; do
+            if [[ "$status" == "Stopped" || -z "$status" ]]; then
+                if [[ -f "$STATE_FILE" ]]; then
+                    IFS='|' read -r last_player last_icon last_text < "$STATE_FILE"
+                    echo " %{F#5dbb63}${last_icon}%{F-} ${last_text}  %{A1:playerctl previous:}󰒮%{A} %{A1:~/.config/bspwm/rices/julia/mpris.sh --playpause:}󰐊%{A} %{A1:playerctl next:}󰒭%{A} "
+                else
+                    echo " %{F#5c6370}No Music %{F-} "
+                fi
+            else
+                icon=""
+                
+                if [[ "${player,,}" == *"spotify"* ]]; then icon="󰓇"
+                elif [[ "${player,,}" == *"spotube"* ]]; then icon=""
+                elif [[ "${player,,}" == *"firefox"* ]]; then icon="󰈹"
+                elif [[ "${player,,}" == *"chromium"* ]]; then icon="󰊯"
+                elif [[ "${player,,}" == *"brave"* ]]; then icon="󰇧"
+                elif [[ "${player,,}" == *"vlc"* ]]; then icon="󰕼"
+                fi
+
+                if [[ -n "$artist" ]]; then text="$artist - $title"
+                else text="$title"
+                fi
+
+                if [ ${#text} -gt 35 ]; then text="${text:0:35}..."
+                fi
+
+                echo "${player}|${icon}|${text}" > "$STATE_FILE"
+
+                if [[ "$status" == "Playing" ]]; then play_icon="󰏤"
+                else play_icon="󰐊"
+                fi
+
+                echo " %{F#5dbb63}$icon%{F-} $text  %{A1:playerctl previous:}󰒮%{A} %{A1:~/.config/bspwm/rices/julia/mpris.sh --playpause:}$play_icon%{A} %{A1:playerctl next:}󰒭%{A} "
+            fi
+        done
+    fi
+done

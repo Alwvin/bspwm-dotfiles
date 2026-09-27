@@ -1,0 +1,16 @@
+/** Style and colors generated for the julia theme. **/
+
+:root {
+    --z0mbi3-bg: #101210;
+    --z0mbi3-fg: #e2e8f0;
+    --z0mbi3-accent-color: #a87298;
+    --z0mbi3-accent-color-inactive: #1c211c;
+    --z0mbi3-black: #101210;
+    --z0mbi3-red: #a35b5b;
+    --z0mbi3-green: #5a7d60;
+    --z0mbi3-yellow: #c9b777;
+    --z0mbi3-blue: #628299;
+    --z0mbi3-magenta: #a87298;
+    --z0mbi3-cyan: #60998f;
+    --z0mbi3-white: #e2e8f0;
+}

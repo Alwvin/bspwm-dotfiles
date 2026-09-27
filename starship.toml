@@ -1,0 +1,86 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = false
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$nodejs\
+$python\
+$rust\
+$golang\
+$c\
+$cpp\
+$cmd_duration
+$character"""
+
+[username]
+style_user = 'bold green'
+style_root = 'bold red'
+format = '[$user]($style)'
+show_always = true
+
+[hostname]
+ssh_only = false
+style = 'bold yellow'
+format = ' on [$hostname]($style)'
+
+[directory]
+style = 'bold cyan'
+format = ' [$path]($style)'
+truncation_length = 3
+truncation_symbol = '…/'
+
+[git_branch]
+symbol = ' ' # Simbol fork/branch
+style = 'bold purple'
+format = ' on [$symbol$branch]($style)'
+
+[git_status]
+style = 'bold red'
+format = ' [\[$all_status$ahead_behind\]]($style)'
+
+[nodejs]
+symbol = ' '
+style = 'bold green'
+format = ' via [$symbol$version]($style)'
+
+[python]
+symbol = ' '
+style = 'bold yellow'
+format = ' via [$symbol$version]($style)'
+
+[rust]
+symbol = ' '
+style = 'bold red'
+format = ' via [$symbol$version]($style)'
+
+[golang]
+symbol = ' '
+style = 'bold cyan'
+format = ' via [$symbol$version]($style)'
+
+[c]
+symbol = ' '
+style = 'bold blue'
+format = ' via [$symbol$version]($style)'
+
+[cpp]
+symbol = ' '
+style = 'bold blue'
+format = ' via [$symbol$version]($style)'
+
+[cmd_duration]
+min_time = 0 # Diset 0 biar selalu nampil (took ...ms) kayak di gambar
+style = 'italic red'
+format = ' took [$duration]($style)'
+
+[character]
+success_symbol = '[↳](bold green) '
+error_symbol = '[↳](bold red) '
+
+[package]
+disabled = true
